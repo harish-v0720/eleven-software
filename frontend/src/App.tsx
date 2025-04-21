@@ -1,13 +1,12 @@
 // src/App.tsx
-import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
-import CourseTypes from "./components/CourseTypes"
+import CourseTypes from "./components/CourseTypes";
 import Course from "./components/Courses";
 import CourseOfferings from "./components/CourseOfferings";
 import RegistrationsPage from "./components/RegistrationsPage";
 
-const App= () => {
+const App = () => {
   return (
     <BrowserRouter>
       <Routes>
