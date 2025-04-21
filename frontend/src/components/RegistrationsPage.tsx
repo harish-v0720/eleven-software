@@ -23,6 +23,12 @@ const RegistrationsPage = () => {
   const [phone, setPhone] = useState("");
   const [selected, setSelected] = useState("");
   const [showPopup, setShowPopup] = useState(false);
+  const [errors, setErrors] = useState({
+    studentName: "",
+    email: "",
+    phone: "",
+    selected: "",
+  });
 
   useEffect(() => {
     if (selectedOfferingId) {
@@ -40,20 +46,54 @@ const RegistrationsPage = () => {
       : "No course available";
   };
 
+  const validate = () => {
+    const newErrors = {
+      studentName: "",
+      email: "",
+      phone: "",
+      selected: "",
+    };
+    let isValid = true;
+
+    if (!studentName.trim()) {
+      newErrors.studentName = "Name is required";
+      isValid = false;
+    }
+
+    if (!email.trim() || !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
+      newErrors.email = "Valid email is required";
+      isValid = false;
+    }
+
+    if (!phone.trim() || !/^\d{10}$/.test(phone)) {
+      newErrors.phone = "Valid 10-digit phone number is required";
+      isValid = false;
+    }
+
+    if (!selected) {
+      newErrors.selected = "Please select a course offering";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const handleRegister = () => {
-    if (studentName && email && phone && selected) {
+    if (validate()) {
       register(studentName, email, phone, selected);
       setStudentName("");
       setEmail("");
       setPhone("");
       setSelected("");
+      setErrors({ studentName: "", email: "", phone: "", selected: "" });
       setShowPopup(true);
-      setTimeout(() => setShowPopup(false), 500); // Close the popup after 2 seconds
+      setTimeout(() => setShowPopup(false), 2000);
     }
   };
 
   const handleDelete = (registrationId: string) => {
-    deleteRegistration(registrationId); // Function to delete a specific registration
+    deleteRegistration(registrationId);
   };
 
   return (
@@ -88,7 +128,6 @@ const RegistrationsPage = () => {
                 <div>
                   <strong>Course:</strong> {getOfferingLabel(r.offeringId)}
                 </div>
-                {/* Delete button for individual registrations */}
                 <button
                   onClick={() => handleDelete(r.id)}
                   className="bg-red-600 text-white px-4 py-1 rounded mt-2 hover:bg-red-700"
@@ -102,39 +141,62 @@ const RegistrationsPage = () => {
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <input
-              type="text"
-              placeholder="Student Name"
-              value={studentName}
-              onChange={(e) => setStudentName(e.target.value)}
-              className="border p-2"
-            />
-            <input
-              type="email"
-              placeholder="Email ID"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="border p-2"
-            />
-            <input
-              type="tel"
-              placeholder="Phone Number"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className="border p-2"
-            />
-            <select
-              value={selected}
-              onChange={(e) => setSelected(e.target.value)}
-              className="border p-2"
-            >
-              <option value="">Select Offering</option>
-              {offerings.map((o) => (
-                <option key={o.id} value={o.id}>
-                  {getOfferingLabel(o.id)}
-                </option>
-              ))}
-            </select>
+            <div>
+              <input
+                type="text"
+                placeholder="Student Name"
+                value={studentName}
+                onChange={(e) => setStudentName(e.target.value)}
+                className="border p-2 w-full"
+              />
+              {errors.studentName && (
+                <p className="text-red-600 text-sm">{errors.studentName}</p>
+              )}
+            </div>
+
+            <div>
+              <input
+                type="email"
+                placeholder="Email ID"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="border p-2 w-full"
+              />
+              {errors.email && (
+                <p className="text-red-600 text-sm">{errors.email}</p>
+              )}
+            </div>
+
+            <div>
+              <input
+                type="tel"
+                placeholder="Phone Number"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="border p-2 w-full"
+              />
+              {errors.phone && (
+                <p className="text-red-600 text-sm">{errors.phone}</p>
+              )}
+            </div>
+
+            <div>
+              <select
+                value={selected}
+                onChange={(e) => setSelected(e.target.value)}
+                className="border p-2 w-full"
+              >
+                <option value="">Select Offering</option>
+                {offerings.map((o) => (
+                  <option key={o.id} value={o.id}>
+                    {getOfferingLabel(o.id)}
+                  </option>
+                ))}
+              </select>
+              {errors.selected && (
+                <p className="text-red-600 text-sm">{errors.selected}</p>
+              )}
+            </div>
           </div>
 
           <button
