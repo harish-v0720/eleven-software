@@ -55,7 +55,7 @@ const Layout = () => {
             className="cursor-pointer p-2 bg-black"
             onClick={toggleAdminView}
           >
-            {admin ? "Enable Student View" : "Enable Admin View"}
+            {admin ? "Enable Student Panel" : "Enable Admin Panel"}
           </Button>
         </nav>
       </header>
